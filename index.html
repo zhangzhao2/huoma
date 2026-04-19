@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>千佛山相亲大会交流群</title>
+    <style>
+        /* 重置微信内置浏览器默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #fff5f7 0%, #fde8ef 50%, #ffffff 100%);
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 32px 20px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #d63384;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 360px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(214, 51, 132, 0.12);
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .group-label {
+            display: inline-block;
+            font-size: 13px;
+            color: #d63384;
+            background: #fde8ef;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .qrcode {
+            width: 100%;
+            max-width: 280px;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f5f5f5;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .tip {
+            font-size: 14px;
+            color: #666;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .all-full {
+            font-size: 16px;
+            color: #d63384;
+            padding: 60px 20px;
+            line-height: 1.8;
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            padding: 20px 10px 8px;
+            line-height: 1.6;
+        }
+
+        /* 手机端适配 */
+        @media (max-width: 360px) {
+            .title { font-size: 20px; }
+            .card { padding: 20px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 -->
+        <div class="header">
+            <div class="title">千佛山相亲大会交流群</div>
+            <div class="subtitle">扫码入群 · 相遇美好</div>
+        </div>
+
+        <!-- 二维码展示区 -->
+        <div class="card" id="card">
+            <!-- JS 动态渲染内容 -->
+        </div>
+
+        <!-- 底部温馨提示 -->
+        <div class="footer">
+            温馨提示：本群为本次相亲大会交流专用，禁止广告和骚扰行为
+        </div>
+    </div>
+
+    <script>
+        // ===================================================================
+        // 【配置区】只需修改下面这个数组即可维护群状态
+        // ===================================================================
+        // 1. image: 群二维码图片地址（可以是本地路径如 "./qr1.jpg"，也可以是网络URL）
+        // 2. full:  群是否已满员，true = 已满，false = 未满
+        // 3. 最多支持 5 个群，按顺序从上到下展示，优先显示第一个未满的群
+        // ===================================================================
+        const groups = [
+            {
+                name: "第 1 群",
+                image: "./qr1.jpg",      // ← 替换为你的第 1 个群二维码图片地址
+                full:  false             // ← 修改满员状态：true=已满 / false=未满
+            },
+            {
+                name: "第 2 群",
+                image: "./qr2.jpg",      // ← 替换为你的第 2 个群二维码图片地址
+                full:  false             // ← 修改满员状态
+            },
+            {
+                name: "第 3 群",
+                image: "./qr3.jpg",      // ← 替换为你的第 3 个群二维码图片地址
+                full:  false             // ← 修改满员状态
+            },
+            {
+                name: "第 4 群",
+                image: "./qr4.jpg",      // ← 替换为你的第 4 个群二维码图片地址
+                full:  false             // ← 修改满员状态
+            },
+            {
+                name: "第 5 群",
+                image: "./qr5.jpg",      // ← 替换为你的第 5 个群二维码图片地址
+                full:  false             // ← 修改满员状态
+            }
+        ];
+        // ===================================================================
+        // 【配置区】结束 —— 下面是渲染逻辑，一般不需要修改
+        // ===================================================================
+
+        function render() {
+            const card = document.getElementById('card');
+            // 找到第一个未满员的群
+            const active = groups.find(g => !g.full);
+
+            if (active) {
+                card.innerHTML = `
+                    <div class="group-label">当前开放：${active.name}</div>
+                    <img class="qrcode" src="${active.image}" alt="${active.name}二维码"
+                         onerror="this.style.background='#fde8ef';this.alt='二维码加载失败，请检查图片地址';">
+                    <div class="tip">扫码加入交流群，群满后自动切换下一群</div>
+                `;
+            } else {
+                // 所有群都满了
+                card.innerHTML = `
+                    <div class="all-full">
+                        所有群已满<br>
+                        请稍后再试 🌸
+                    </div>
+                `;
+            }
+        }
+
+        render();
+    </script>
+</body>
+</html>
